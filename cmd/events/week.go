@@ -15,7 +15,13 @@ var EventListCmd = &cobra.Command{
 	Long:  `List all the events in the week in the selected calendar`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		c := calendar.NewClient()
-		events, err := c.ListWeekEvents()
+
+		id, err := c.GetAgendaID()
+		if err != nil {
+			return err
+		}
+
+		events, err := c.ListWeekEvents(id)
 		if err != nil {
 			return err
 		}

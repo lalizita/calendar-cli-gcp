@@ -13,7 +13,13 @@ var EventTodayCmd = &cobra.Command{
 	Long:  "List all event you have",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		c := calendar.NewClient()
-		events, err := c.ListTodayEvents()
+
+		id, err := c.GetAgendaID()
+		if err != nil {
+			return err
+		}
+
+		events, err := c.ListTodayEvents(id)
 		if err != nil {
 			return err
 		}

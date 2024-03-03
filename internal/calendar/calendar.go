@@ -44,10 +44,11 @@ func NewClient() *Calendar {
 }
 
 func (c *Calendar) AddAgenda(id string) error {
-	ag := &gCalendar.CalendarListEntry{
+	entry := &gCalendar.CalendarListEntry{
 		Id: id,
 	}
-	add, err := c.Service.CalendarList.Insert(ag).Do()
+	add, err := c.Service.CalendarList.Insert(entry).Do()
+
 	if err != nil {
 		log.Fatal(err)
 		return ErrAddAgenda
@@ -62,7 +63,6 @@ func (c *Calendar) GetAgendaID() (string, error) {
 	if err != nil {
 		return "", ErrListAgendas
 	}
-	fmt.Println("==>", list.HTTPStatusCode)
 
 	for _, v := range list.Items {
 		if v.Summary == AGENDA {
@@ -74,12 +74,8 @@ func (c *Calendar) GetAgendaID() (string, error) {
 }
 
 // ListWeekEvents returns all events in a week of a calendar
-func (c *Calendar) ListWeekEvents() ([]string, error) {
+func (c *Calendar) ListWeekEvents(id string) ([]string, error) {
 	allEvents := []string{}
-	id, err := c.GetAgendaID()
-	if err != nil {
-		return []string{}, err
-	}
 
 	now := time.Now()
 	weekday := now.Weekday()
@@ -96,12 +92,8 @@ func (c *Calendar) ListWeekEvents() ([]string, error) {
 	return allEvents, nil
 }
 
-func (c *Calendar) ListTodayEvents() ([]string, error) {
+func (c *Calendar) ListTodayEvents(id string) ([]string, error) {
 	allEvents := []string{}
-	id, err := c.GetAgendaID()
-	if err != nil {
-		return []string{}, err
-	}
 
 	year, month, day := time.Now().Date()
 	startDate := time.Date(year, month, day, 0, 0, 0, 0, time.UTC)
